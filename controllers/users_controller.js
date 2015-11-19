@@ -1,4 +1,6 @@
-var User = require('../models/user.js')
+var User    = require('../models/user.js'),
+    jwt     = require('jsonwebtoken'),
+    secret  = 'boom'
 
 function create(req, res){
   var user = new User(req.body.user)
@@ -18,12 +20,18 @@ function signIn(req,res){
     if(err) res.json({err: err})
     if(user){
       if(user.authenticate(req.body.password))
-        res.json({ message: "valid user"})
+        var token = jwt.sign({
+          name: user.name,
+          email: user.email
+        }, secret, {
+          expiresInMinutes: 1440
+        })
+        res.json({ success: true, message: "valid user", token: token })
       else
-        res.json({ message: "invalid user"})
+        res.json({ message: "invalid user" })
     }
     else
-      res.json({ message: "user not found"})
+      res.json({ message: "user not found" })
   })
 }
 
