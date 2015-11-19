@@ -19,7 +19,7 @@ function signIn(req,res){
   User.findOne({ email: req.body.email} , function(err,user){
     if(err) res.json({err: err})
     if(user){
-      if(user.authenticate(req.body.password))
+      if(user.authenticate(req.body.password)) {
         var token = jwt.sign({
           name: user.name,
           email: user.email
@@ -27,8 +27,9 @@ function signIn(req,res){
           expiresInMinutes: 1440
         })
         res.json({ success: true, message: "valid user", token: token })
-      else
+      } else {
         res.json({ message: "invalid user" })
+      }
     }
     else
       res.json({ message: "user not found" })
